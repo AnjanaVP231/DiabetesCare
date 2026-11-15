@@ -32,9 +32,32 @@ app.config["SECRET_KEY"] = os.environ.get(
     "SECRET_KEY",
     "temporary-development-key"
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = (
-    "sqlite:///" + str(BASE_DIR / "database" / "diabetes.db")
-)
+
+# Database configuration
+database_url = os.environ.get("DATABASE_URL")
+
+if database_url:
+    if database_url.startswith("postgres://"):
+        database_url = database_url.replace(
+            "postgres://",
+            "postgresql+psycopg://",
+            1
+        )
+    elif database_url.startswith("postgresql://"):
+        database_url = database_url.replace(
+            "postgresql://",
+            "postgresql+psycopg://",
+            1
+        )
+else:
+    database_dir = BASE_DIR / "database"
+    database_dir.mkdir(parents=True, exist_ok=True)
+
+    database_url = (
+        "sqlite:///" + str(database_dir / "diabetes.db")
+    )
+
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Initialize extensions
@@ -479,9 +502,9 @@ def health():
         "probability_available": hasattr(model, "predict_proba")
     }
 
+# Initialize database tables
+with app.app_context():
+    db.create_all()
+
 if __name__ == "__main__":
-
-    with app.app_context():
-        db.create_all()
-
     app.run(debug=True)

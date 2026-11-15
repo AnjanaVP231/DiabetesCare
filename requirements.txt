@@ -8,3 +8,6 @@ joblib
 pandas
 numpy
 scikit-learn==1.7.1
+shap
+gunicorn
+psycopg[binary]
