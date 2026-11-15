@@ -5,6 +5,14 @@ DiabetesCare is a web-based diabetes risk prediction application that uses Machi
 
 The application uses a **Random Forest classification model** and provides personalized explanations through SHAP and Counterfactual Explanations.
 
+## 🌐 Live Demo
+
+**Website:** https://diabetescare-cgd0.onrender.com/login
+
+DiabetesCare is deployed using Render, with Neon PostgreSQL for cloud database storage.
+
+*Note: The free hosting service may take a little time to respond after periods of inactivity.*
+
 ## ✨ Features
 
 - **User Authentication** – Secure registration and login with bcrypt password hashing.
@@ -36,7 +44,9 @@ The objective is not only to predict diabetes risk but also to provide understan
 | Frontend | HTML, CSS, Bootstrap |
 | Machine Learning | Scikit-learn |
 | Explainable AI | SHAP |
-| Database | SQLite |
+|Database | SQLite (Local Development), Neon PostgreSQL (Deployment) |
+|Hosting  | Render |
+|Version Control | Git and GitHub |
 | Authentication | Flask-Bcrypt |
 | Data Processing | Pandas, NumPy |
 
