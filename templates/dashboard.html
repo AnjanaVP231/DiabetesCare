@@ -1,0 +1,336 @@
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard | DiabetesCare{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-page">
+
+    <!-- HERO SECTION -->
+    <section class="dashboard-welcome">
+
+        <div class="welcome-content">
+            <span class="eyebrow">YOUR HEALTH OVERVIEW</span>
+
+            <h1>Welcome, {{ current_user.username }}!</h1>
+
+            <p>
+                Understand your diabetes risk through machine learning
+                and discover what influences the prediction with Explainable AI.
+            </p>
+
+            <a href="{{ url_for('predict') }}" class="hero-action">
+                <span>Start Risk Assessment</span>
+                <span>→</span>
+            </a>
+        </div>
+
+        <div class="hero-visual">
+            <div class="hero-glow"></div>
+            <div class="health-orbit orbit-one"></div>
+            <div class="health-orbit orbit-two"></div>
+
+            
+            <div class="health-core medical-body">
+                    <svg viewBox="0 0 300 300"
+                        role="img"
+                        aria-label="Medical illustration showing the pancreas">
+
+                        <defs>
+                            <radialGradient id="bodyGlow">
+                                <stop offset="0%" stop-color="#2ed9ed" stop-opacity=".35"/>
+                                <stop offset="100%" stop-color="#087baf" stop-opacity=".04"/>
+                            </radialGradient>
+
+                            <filter id="organGlow">
+                                <feGaussianBlur stdDeviation="5" result="blur"/>
+                                <feMerge>
+                                    <feMergeNode in="blur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- Human silhouette -->
+                        <circle cx="150" cy="36" r="24"
+                                fill="#0b719d" stroke="#5adcf5" stroke-width="2"/>
+
+                        <path d="M126 66
+                                C110 69 88 77 70 91
+                                L43 145
+                                L60 155
+                                L91 116
+                                L100 180
+                                L92 280
+                                L208 280
+                                L200 180
+                                L209 116
+                                L240 155
+                                L257 145
+                                L230 91
+                                C212 77 190 69 174 66Z"
+                            fill="url(#bodyGlow)"
+                            stroke="#42c9eb"
+                            stroke-width="2.5"/>
+
+                        <!-- Chest anatomy -->
+                        <path d="M150 75 V177"
+                            stroke="#50cbe9" stroke-width="2" opacity=".5"/>
+
+                        <path d="M105 105 Q150 125 195 105
+                                M100 125 Q150 147 200 125
+                                M98 146 Q150 166 202 146"
+                            fill="none" stroke="#48c5e5"
+                            stroke-width="1.5" opacity=".45"/>
+
+                        <!-- Pancreas highlight -->
+                        <path d="M112 183
+                                C125 166 145 173 157 179
+                                C172 184 184 170 194 179
+                                C183 195 165 203 149 196
+                                C134 191 125 204 112 183Z"
+                            fill="#ff9b58"
+                            stroke="#ffd19b"
+                            stroke-width="2"
+                            filter="url(#organGlow)"/>
+
+                        <circle cx="150" cy="186" r="4"
+                                fill="#fff0bd"/>
+
+                        <!-- Scanning effect -->
+                        <path class="body-scan"
+                            d="M55 145 H245"
+                            stroke="#50e8f0"
+                            stroke-width="2"
+                            opacity=".8"/>
+                    </svg>
+
+                    <span class="core-label"> · AI HEALTH ANALYSIS</span>
+                </div>
+
+            <div class="data-node node-one">HEALTH DATA</div>
+            <div class="data-node node-two">RANDOM FOREST</div>
+            <div class="data-node node-three">SHAP ANALYSIS</div>
+        </div>
+
+    </section>
+
+    <!-- MAIN ACTION CARDS -->
+    <section class="dashboard-actions">
+
+        <div class="dashboard-action-card prediction-action">
+
+            <div class="action-icon">
+                <svg viewBox="0 0 64 64" fill="none">
+                    <path d="M12 52V35M27 52V24M42 52V13"
+                        stroke="currentColor" stroke-width="6"
+                        stroke-linecap="round"/>
+                    <path d="M7 53H51"
+                        stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round"/>
+                    <path d="M39 16L45 10L51 16"
+                        stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="action-content">
+                <span class="eyebrow">RISK ASSESSMENT</span>
+                <h2>Make a Prediction</h2>
+                <p>
+                    Enter your health parameters to estimate
+                    your diabetes risk.
+                </p>
+
+                <a href="{{ url_for('predict') }}" class="primary-button">
+                    Start Prediction <span>→</span>
+                </a>
+            </div>
+
+            <div class="action-art glucose-art">
+                <div class="art-circle"></div>
+
+                <svg viewBox="0 0 180 180" role="img"
+                     aria-label="Illustration of a glucose meter">
+                    <path d="M125 15 C125 15 103 43 103 57
+                        A22 22 0 0 0 147 57 C147 43 125 15 125 15Z"
+                        fill="#37cfc5" opacity=".8"/>
+
+                    <g transform="rotate(-10 85 100)">
+                        <rect x="38" y="35" width="91" height="125"
+                            rx="19" fill="#0b456e"/>
+                        <rect x="45" y="42" width="77" height="111"
+                            rx="14" fill="#168eae"/>
+                        <rect x="53" y="55" width="61" height="59"
+                            rx="8" fill="#e6fbff"/>
+                        <path d="M61 69H105" stroke="#9ccbd7"
+                            stroke-width="2"/>
+                        <circle cx="67" cy="133" r="7" fill="#d9f8f5"/>
+                        <circle cx="101" cy="133" r="7" fill="#d9f8f5"/>
+                        <path d="M84 160V177" stroke="#f0a36b"
+                            stroke-width="5" stroke-linecap="round"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="dashboard-action-card history-action">
+
+            <div class="action-icon history-icon">
+                <svg viewBox="0 0 64 64" fill="none">
+                    <path d="M12 18V7M12 18H23"
+                        stroke="currentColor" stroke-width="4"
+                        stroke-linecap="round"/>
+                    <path d="M12 18C18 7 32 3 44 10
+                        C56 17 59 33 52 45
+                        C45 57 29 61 17 54"
+                        stroke="currentColor" stroke-width="4"
+                        stroke-linecap="round"/>
+                    <path d="M32 17V32L42 39"
+                        stroke="currentColor" stroke-width="4"
+                        stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+
+            <div class="action-content">
+                <span class="eyebrow">YOUR RECORDS</span>
+                <h2>View Prediction History</h2>
+                <p>
+                    Check your previous predictions and
+                    review their estimated probabilities.
+                </p>
+
+                <a href="{{ url_for('history') }}" class="secondary-button">
+                    View History <span>→</span>
+                </a>
+            </div>
+
+            <div class="action-art history-art">
+                <div class="art-circle"></div>
+
+                <svg viewBox="0 0 180 180" role="img"
+                     aria-label="Illustration of a medical records clipboard">
+                    <rect x="43" y="32" width="98" height="125"
+                        rx="12" fill="#0d4774"/>
+                    <rect x="51" y="43" width="82" height="105"
+                        rx="7" fill="#e8faff"/>
+                    <rect x="75" y="24" width="35" height="15"
+                        rx="6" fill="#0d4774"/>
+                    <path d="M68 67L76 75L86 63"
+                        stroke="#0d9488" stroke-width="4"
+                        fill="none" stroke-linecap="round"/>
+                    <path d="M94 69H119M68 94L76 102L86 90"
+                        stroke="#0d9488" stroke-width="4"
+                        fill="none" stroke-linecap="round"/>
+                    <path d="M94 96H119M68 121L76 129L86 117"
+                        stroke="#0d9488" stroke-width="4"
+                        fill="none" stroke-linecap="round"/>
+                    <circle cx="130" cy="137" r="25" fill="#168eae"/>
+                    <circle cx="130" cy="137" r="19" fill="#e6fbff"/>
+                    <path d="M130 125V138L139 143"
+                        stroke="#0d4774" stroke-width="3"
+                        stroke-linecap="round"/>
+                </svg>
+            </div>
+        </div>
+
+    </section>
+
+    <!-- INFORMATION CARDS -->
+    <section class="dashboard-info-grid">
+
+        <!-- KEY FEATURES -->
+        <div class="info-card features-info">
+
+            <div class="info-title">
+                <span class="info-symbol">✦</span>
+                <h3>Key Features</h3>
+            </div>
+
+            <ul class="dashboard-feature-list">
+                <li><span>✓</span> Random Forest Prediction</li>
+                <li><span>✓</span> Explainable AI (SHAP)</li>
+                <li><span>✓</span> Counterfactual Analysis</li>
+            </ul>
+
+        </div>
+
+        <!-- ABOUT DIABETES -->
+        <div class="info-card about-info">
+
+            <div class="info-title">
+                <span class="info-symbol">i</span>
+                <h3>About Diabetes</h3>
+            </div>
+
+            <p>
+                Diabetes is a chronic condition that affects how
+                the body regulates blood glucose. Understanding
+                risk factors can support informed health decisions.
+            </p>
+
+            <a href="https://www.who.int/news-room/fact-sheets/detail/diabetes"
+               target="_blank" rel="noopener noreferrer">
+                Learn More →
+            </a>
+
+            <div class="diabetes-ribbon" aria-hidden="true">
+                <svg viewBox="0 0 90 115">
+                    <path d="M45 8L80 28V63L45 105L10 63V28Z"
+                        fill="#0d9488" opacity=".95"/>
+                    <path d="M45 19L67 32V57L45 84L23 57V32Z"
+                        fill="#ffffff" opacity=".9"/>
+                </svg>
+            </div>
+
+        </div>
+
+        <!-- HEALTHY TIPS -->
+        <div class="info-card tips-info">
+
+            <div class="info-title">
+                <span class="info-symbol">✧</span>
+                <h3>Healthy Tips</h3>
+            </div>
+
+            <ul class="dashboard-feature-list">
+                <li><span>✓</span> Maintain a healthy lifestyle</li>
+                <li><span>✓</span> Stay physically active</li>
+                <li><span>✓</span> Choose balanced meals</li>
+            </ul>
+
+            <div class="tips-decoration">
+                <svg viewBox="0 0 150 110" role="img"
+                     aria-label="Healthy food illustration">
+                    <path d="M15 62Q75 115 135 62"
+                        fill="#b9e8df"/>
+                    <path d="M18 60Q75 95 132 60"
+                        fill="#ffffff" stroke="#0d9488"
+                        stroke-width="3"/>
+                    <circle cx="48" cy="52" r="15" fill="#ef795e"/>
+                    <circle cx="77" cy="43" r="17" fill="#8cbf63"/>
+                    <circle cx="103" cy="56" r="13" fill="#f2c45f"/>
+                    <path d="M77 25Q62 5 52 20Q67 36 77 25Z"
+                        fill="#249b75"/>
+                    <path d="M80 25Q96 5 108 18Q95 35 80 25Z"
+                        fill="#4aaf79"/>
+                </svg>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- DISCLAIMER -->
+    <div class="dashboard-disclaimer">
+        <span class="disclaimer-icon">ⓘ</span>
+        <p>
+            Model probabilities are estimates and should not be
+            interpreted as confirmed medical diagnoses.
+        </p>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,116 @@
+
+{% extends "base.html" %}
+
+{% block title %}Prediction History | DiabetesCare{% endblock %}
+
+{% block content %}
+
+<div class="history-page">
+
+    <div class="page-heading">
+        <span class="eyebrow">YOUR RECORDS</span>
+        <h1>Prediction History</h1>
+        <p>Review your previously generated diabetes risk predictions.</p>
+    </div>
+
+    <section class="card history-container">
+
+        <div class="history-heading">
+            <div>
+                <h2>Previous Predictions</h2>
+                <p>Your saved prediction records</p>
+            </div>
+
+            {% if predictions %}
+                <span class="history-count">
+                    {{ predictions|length }} Records
+                </span>
+            {% endif %}
+        </div>
+
+        {% if predictions %}
+
+        <div class="table-wrapper">
+            <table class="result-table history-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date & Time</th>
+                        <th>Prediction Result</th>
+                        <th>Model Probability</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in predictions %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+
+                        <td>
+                            <span class="history-date">
+                                {{ item.created_at.strftime("%d %b %Y") }}
+                            </span>
+                            <small class="history-time">
+                                {{ item.created_at.strftime("%I:%M %p") }}
+                            </small>
+                        </td>
+
+                        <td>
+                            {% if item.result == 1 %}
+                                <span class="history-status higher">
+                                    Higher Risk Indicated
+                                </span>
+                            {% else %}
+                                <span class="history-status lower">
+                                    Lower Risk Indicated
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <strong class="history-probability">
+                                {{ "%.2f"|format(item.probability * 100) }}%
+                            </strong>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% else %}
+
+        <div class="history-empty">
+            <div class="empty-icon">↗</div>
+            <h3>No Prediction History Yet</h3>
+            <p>
+                You haven't generated any predictions.
+                Start a new assessment to see your records here.
+            </p>
+            <a href="{{ url_for('predict') }}" class="primary-button">
+                Create Your First Prediction →
+            </a>
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <div class="history-actions">
+        <a href="{{ url_for('predict') }}" class="primary-button">
+            + New Prediction
+        </a>
+
+        <a href="{{ url_for('dashboard') }}" class="secondary-button">
+            Back to Dashboard
+        </a>
+    </div>
+
+    <p class="history-disclaimer">
+        Model probabilities are estimates and should not be interpreted
+        as confirmed medical diagnoses.
+    </p>
+
+</div>
+
+{% endblock %}

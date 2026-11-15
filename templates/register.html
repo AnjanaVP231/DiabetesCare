@@ -1,0 +1,48 @@
+
+{% extends "base.html" %}
+
+{% block title %}Register | DiabetesCare{% endblock %}
+
+{% block content %}
+
+<div class="card auth-card">
+
+    <h1>Create Account</h1>
+    <p class="muted">Register to access diabetes risk prediction.</p>
+
+    <form method="POST">
+
+        <input type="hidden" name="csrf_token"
+               value="{{ csrf_token() }}">
+
+        <label>Username</label>
+        <input type="text" name="username"
+               placeholder="Enter username" maxlength="100"
+               required>
+
+        <label>Email Address</label>
+        <input type="email" name="email"
+               placeholder="Enter email" maxlength="150"
+               required>
+
+        <label>Password</label>
+        <input type="password" name="password"
+               placeholder="Minimum 8 characters"
+               minlength="8" required>
+
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password"
+               placeholder="Re-enter password" required>
+
+        <button type="submit">Create Account</button>
+
+    </form>
+
+    <p class="muted">
+        Already registered?
+        <a href="{{ url_for('login') }}">Login here</a>
+    </p>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,172 @@
+
+{% extends "base.html" %}
+
+{% block title %}New Prediction | DiabetesCare{% endblock %}
+
+{% block content %}
+
+<div class="prediction-page">
+
+    <div class="page-heading">
+        <span class="eyebrow">HEALTH ASSESSMENT</span>
+        <h1>Diabetes Risk Prediction</h1>
+        <p>
+            Enter the health measurements below to receive a
+            machine-learning-based risk estimate.
+        </p>
+    </div>
+
+    <form method="POST" action="{{ url_for('predict') }}" class="prediction-form">
+
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <!-- Personal Information -->
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>01. Personal Information</h2>
+                <p>Basic personal details</p>
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-field">
+                    <label for="pregnancies">Number of Pregnancies</label>
+                    <input type="number" id="pregnancies"
+                           name="pregnancies" min="0" max="20"
+                           step="1" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="age">Age (years)</label>
+                    <input type="number" id="age"
+                           name="age" min="1" max="120"
+                           step="1" required>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Health Measurements -->
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>02. Health Measurements</h2>
+                <p>Enter the available health measurements</p>
+            </div>
+
+            <div class="form-grid">
+
+                <div class="form-field">
+                    <label for="glucose">Glucose Level (mg/dL)</label>
+                    <input type="number" id="glucose"
+                           name="glucose" min="0" max="300"
+                           step="any" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="blood_pressure">Blood Pressure (mm Hg)</label>
+                    <input type="number" id="blood_pressure"
+                           name="blood_pressure" min="0" max="200"
+                           step="any" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="skin_thickness">Skin Thickness (mm)</label>
+                    <input type="number" id="skin_thickness"
+                           name="skin_thickness" min="0" max="100"
+                           step="any" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="insulin">Insulin Level (mu U/ml)</label>
+                    <input type="number" id="insulin"
+                           name="insulin" min="0" max="1000"
+                           step="any" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="bmi">Body Mass Index (BMI)</label>
+                    <input type="number" id="bmi"
+                           name="bmi" min="0" max="100"
+                           step="any" required>
+                </div>
+
+                <div class="form-field">
+                    <label for="dpf">Diabetes Pedigree Function</label>
+                    <input type="number" id="dpf"
+                           name="dpf" min="0" max="3"
+                           step="any"
+                           placeholder="Enter DPF (optional)">
+                    <small>
+                        Leave blank if unknown. The model uses its
+                        training-data median for missing DPF.
+                    </small>
+                </div>
+
+            </div>
+
+            <div class="input-note">
+                <strong>Missing measurements:</strong>
+                For Glucose, Blood Pressure, Skin Thickness, Insulin
+                and BMI, entering 0 is treated as a missing value and
+                handled using the model's trained imputer.
+            </div>
+        </section>
+
+        <!-- Family History -->
+        <section class="form-section">
+            <div class="section-heading">
+                <h2>03. Family History</h2>
+                <p>Optional information about diabetes in your family</p>
+            </div>
+
+            <div class="checkbox-grid">
+
+                <label class="checkbox-option">
+                    <input type="checkbox" name="family_history" value="Mother">
+                    <span>Mother</span>
+                </label>
+
+                <label class="checkbox-option">
+                    <input type="checkbox" name="family_history" value="Father">
+                    <span>Father</span>
+                </label>
+
+                <label class="checkbox-option">
+                    <input type="checkbox" name="family_history" value="Siblings">
+                    <span>Siblings</span>
+                </label>
+
+                <label class="checkbox-option">
+                    <input type="checkbox" name="family_history" value="Grandparents">
+                    <span>Grandparents</span>
+                </label>
+
+                <label class="checkbox-option">
+                    <input type="checkbox" name="family_history" value="Other relatives">
+                    <span>Other close relatives</span>
+                </label>
+
+            </div>
+
+            <small>
+                Family history is collected for display only. It is
+                not currently used as an input to the prediction model.
+            </small>
+        </section>
+
+        <!-- Submit -->
+        <div class="form-actions">
+            <button type="submit" class="prediction-submit">
+                Predict Diabetes Risk →
+            </button>
+
+            <p>
+                This is an educational model estimate, not a medical diagnosis.
+            </p>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

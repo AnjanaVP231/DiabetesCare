@@ -1,0 +1,415 @@
+
+{% extends "base.html" %}
+
+{% block title %}Prediction Result | DiabetesCare{% endblock %}
+
+{% block content %}
+
+<div class="result-page">
+
+    <!-- Result Heading -->
+    <div class="page-heading">
+        <span class="eyebrow">PREDICTION REPORT</span>
+        <h1>Your Prediction Results</h1>
+        <p>Review the model estimate and understand how it was generated.</p>
+    </div>
+
+    <!-- Prediction Summary -->
+    <section class="result-summary card">
+
+        <div class="result-status">
+            {% if prediction == 1 %}
+                <span class="risk-indicator higher">Higher Risk Indicated</span>
+                <h2>Higher Risk Indicated</h2>
+                <p>The model indicates a higher likelihood of diabetes.</p>
+            {% else %}
+                <span class="risk-indicator lower">Lower Risk Indicated</span>
+                <h2>Lower Risk Indicated</h2>
+                <p>The model indicates a lower likelihood of diabetes.</p>
+            {% endif %}
+        </div>
+
+        <div class="probability-section">
+            <div class="probability-heading">
+                <span>Model-estimated probability</span>
+                <strong>{{ "%.2f"|format(probability * 100) }}%</strong>
+            </div>
+
+            <div class="probability-track">
+                <div class="probability-fill"
+                     style="width: {{ probability * 100 }}%;">
+                </div>
+            </div>
+
+            <small>This percentage represents the model's estimated probability for the positive class.</small>
+        </div>
+
+    </section>
+
+    <!-- SHAP Explanation -->
+    <section class="result-section card">
+
+        <div class="result-section-heading">
+            <span class="eyebrow">EXPLAINABLE AI</span>
+            <h2>Why Did the Model Make This Prediction?</h2>
+            <p>
+                SHAP explains how each feature influenced the model's
+                estimated probability for the positive class.
+            </p>
+        </div>
+
+        <div class="baseline-box">
+            <span>Baseline Probability</span>
+            <strong>{{ "%.2f"|format(base_probability * 100) }}%</strong>
+        </div>
+
+        <div class="explanation-legend">
+            <span class="positive-legend">↑ Increases probability</span>
+            <span class="negative-legend">↓ Decreases probability</span>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="result-table">
+                <thead>
+                    <tr>
+                        <th>Feature</th>
+                        <th>SHAP Contribution</th>
+                        <th>Influence</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in shap_explanations %}
+                    <tr>
+                        <td>{{ item.feature }}</td>
+
+                        <td class="{% if item.value > 0 %}positive-value{% elif item.value < 0 %}negative-value{% endif %}">
+                            {{ "%+.4f"|format(item.value) }}
+                        </td>
+
+                        <td>
+                            {% if item.value > 0 %}
+                                <span class="influence positive">Increases probability</span>
+                            {% elif item.value < 0 %}
+                                <span class="influence negative">Decreases probability</span>
+                            {% else %}
+                                <span class="influence neutral">No contribution</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <p class="section-note">
+            Positive SHAP values increase the model's estimated probability
+            for the positive class. Negative values decrease it.
+        </p>
+
+    </section>
+
+    <!-- Counterfactual Explanation -->
+    <section class="result-section card">
+
+        <div class="result-section-heading">
+            <span class="eyebrow">ALTERNATIVE SCENARIO</span>
+            <h2>Counterfactual Explanation</h2>
+            <p>
+                This section compares your input with a similar dataset
+                record that received the opposite prediction from the model.
+            </p>
+        </div>
+
+        {% if counterfactual %}
+
+            <div class="alternative-result">
+                <span>Alternative Model Prediction</span>
+
+                {% if counterfactual.prediction == 1 %}
+                    <strong class="higher-text">Higher Risk Indicated</strong>
+                {% else %}
+                    <strong class="lower-text">Lower Risk Indicated</strong>
+                {% endif %}
+            </div>
+
+            <h3>Feature Differences</h3>
+
+            {% if counterfactual.changes %}
+
+                <div class="table-wrapper">
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Current Input</th>
+                                <th>Counterfactual Example</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for item in counterfactual.changes %}
+                            <tr>
+                                <td>{{ item.feature }}</td>
+                                <td>{{ "%.2f"|format(item.current) }}</td>
+                                <td>{{ "%.2f"|format(item.counterfactual) }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+            {% else %}
+                <p>No feature differences found.</p>
+            {% endif %}
+
+            <div class="distance-box">
+                <span>Normalized Distance</span>
+                <strong>{{ "%.4f"|format(counterfactual.distance) }}</strong>
+            </div>
+
+        {% else %}
+
+            <p>No suitable opposite-prediction example was found in the dataset.</p>
+
+        {% endif %}
+
+        <div class="section-note">
+            This is a dataset-based hypothetical comparison. It is not
+            a medical recommendation or a prediction of what would happen
+            if someone's measurements changed.
+        </div>
+
+    </section>
+
+ 
+    <!-- Lifestyle Guidance -->
+    <section class="result-section card lifestyle-section">
+
+        <div class="result-section-heading">
+            <span class="eyebrow">GENERAL WELLNESS</span>
+            <h2>Lifestyle Guidance</h2>
+            <p>Small, healthy habits can support your overall well-being.</p>
+        </div>
+
+        {% if prediction == 1 %}
+
+            <div class="guidance-intro higher-guidance">
+                The model result indicates a higher likelihood of diabetes.
+                Consider these general health practices and discuss your
+                risk with a qualified healthcare professional.
+            </div>
+
+            <div class="guidance-grid">
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=700"
+                        alt="Healthy balanced food" loading="lazy">
+                    <h3>01. Healthy Eating</h3>
+                    <ul>
+                        <li>Include vegetables, fruits, whole grains and fibre-rich foods.</li>
+                        <li>Be mindful of portion sizes.</li>
+                        <li>Limit sugary drinks and foods high in added sugar.</li>
+                        <li>Choose balanced meals rather than restrictive diets.</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=700"
+                        alt="Person exercising outdoors" loading="lazy">
+                    <h3>02. Physical Activity</h3>
+                    <ul>
+                        <li>Consider walking, cycling or swimming.</li>
+                        <li>Reduce long periods of sitting.</li>
+                        <li>Choose activities appropriate for your health and fitness level.</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=700"
+                        alt="Physical fitness activity" loading="lazy">
+                    <h3>03. Weight Management</h3>
+                    <ul>
+                        <li>Maintain healthy habits without extreme weight-loss plans.</li>
+                        <li>Seek professional guidance when needed.</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=700"
+                        alt="Relaxation and meditation" loading="lazy">
+                    <h3>04. Sleep and Stress</h3>
+                    <ul>
+                        <li>Maintain a regular sleep schedule.</li>
+                        <li>Practise relaxation techniques.</li>
+                        <li>Make time for activities that support mental well-being.</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=700"
+                        alt="Healthcare professional" loading="lazy">
+                    <h3>05. Health Monitoring</h3>
+                    <ul>
+                        <li>Consult a healthcare professional about appropriate glucose testing.</li>
+                        <li>Discuss family history and other risk factors.</li>
+                        <li>Follow professional medical advice.</li>
+                    </ul>
+                </div>
+
+            </div>
+
+        {% else %}
+
+            <div class="guidance-intro lower-guidance">
+                The model result indicates a lower likelihood of diabetes.
+                Maintaining healthy habits can still support your overall
+                well-being.
+            </div>
+
+            <div class="guidance-grid">
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=700"
+                        alt="Healthy balanced food" loading="lazy">
+                    <h3>01. Balanced Nutrition</h3>
+                    <ul>
+                        <li>Eat a variety of vegetables, fruits and whole grains.</li>
+                        <li>Include fibre-rich foods.</li>
+                        <li>Limit excessive added sugar and sugary beverages.</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1538805060514-97d9cc17730c?w=700"
+                        alt="Outdoor physical activity" loading="lazy">
+                    <h3>02. Physical Activity</h3>
+                    <ul>
+                        <li>Include regular walking or enjoyable activities.</li>
+                        <li>Avoid sitting continuously for long periods.</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=700"
+                        alt="Relaxation and mindfulness" loading="lazy">
+                    <h3>03. Healthy Habits</h3>
+                    <ul>
+                        <li>Maintain a consistent sleep routine.</li>
+                        <li>Stay hydrated.</li>
+                        <li>Manage stress and avoid tobacco use.</li>
+                    </ul>
+                </div>
+
+                <div class="guidance-item">
+                    <img class="guidance-image"
+                        src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=700"
+                        alt="Healthcare check-up" loading="lazy">
+                    <h3>04. Preventive Health Checks</h3>
+                    <ul>
+                        <li>Attend routine health check-ups when appropriate.</li>
+                        <li>Discuss screening with a healthcare professional if you have risk factors.</li>
+                    </ul>
+                </div>
+
+            </div>
+
+        {% endif %}
+
+        <!-- Educational Video -->
+        <div class="lifestyle-video">
+            <div class="video-heading">
+                <span class="eyebrow">WATCH AND LEARN</span>
+                <h2>Healthy Eating and Diabetes</h2>
+                <p>Learn about healthy food choices through this educational video.</p>
+            </div>
+
+            <div class="video-frame">
+                
+                <iframe
+                    src="https://www.youtube-nocookie.com/embed/wOIZEz0hAY4"
+                    title="Healthy Eating with Diabetes - NIDDK"
+                    loading="lazy"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    allowfullscreen>
+                </iframe>
+            </div>
+
+            <p class="video-caption">
+                Educational video from the National Institute of Diabetes
+                and Digestive and Kidney Diseases (NIDDK).
+            </p>
+        </div>
+
+        <p class="section-note">
+            These are general educational suggestions, not personalized
+            medical advice. A lower-risk model result does not rule out
+            diabetes, and a higher-risk result does not confirm it.
+            Consult a qualified healthcare professional for medical
+            assessment and guidance.
+        </p>
+
+    </section>
+
+    <!-- Additional Information -->
+    <section class="result-section card">
+
+        <div class="result-section-heading">
+            <span class="eyebrow">ADDITIONAL INFORMATION</span>
+            <h2>Input Details</h2>
+        </div>
+
+        {% if dpf_imputed %}
+            <div class="information-box">
+                <strong>DPF was not provided.</strong>
+                The model's training-data median (0.3555) was used by the imputer.
+            </div>
+        {% endif %}
+
+        <h3>Family History</h3>
+
+        {% if family_history %}
+            <p>{{ family_history | join(", ") }}</p>
+        {% else %}
+            <p class="muted">No family history information selected.</p>
+        {% endif %}
+
+        <p class="section-note">
+            Family history is collected for display only and is not
+            currently used as an input to the prediction model.
+        </p>
+
+    </section>
+
+    <!-- Disclaimer -->
+    <div class="result-disclaimer">
+        <strong>Important Medical Disclaimer</strong>
+        <p>
+            This result is generated by a machine learning model for
+            academic purposes. It is not a medical diagnosis or a
+            substitute for professional medical advice.
+        </p>
+    </div>
+
+    <!-- Actions -->
+    <div class="result-actions">
+        <a href="{{ url_for('predict') }}" class="primary-button">
+            Make Another Prediction →
+        </a>
+
+        <a href="{{ url_for('dashboard') }}" class="secondary-button">
+            Back to Dashboard
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}
